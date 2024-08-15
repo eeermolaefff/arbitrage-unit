@@ -1,0 +1,151 @@
+{
+  "ManualData" : {
+    "ActualMarkets" : [
+      {
+        "id" : 270,
+        "slug" : "binance",
+        "spotPercentCommission" : 0.1
+      },
+      {
+        "id" : 521,
+        "slug" : "bybit",
+        "spotPercentCommission" : 0.1
+      },
+      {
+        "id" : 311,
+        "slug" : "kucoin",
+        "spotPercentCommission" : 0.1
+      }
+    ]
+  },
+  "TransfersParser" : {
+      "marketId" : 270,
+      "blockchainsMap" : {
+        "eth" : 1,
+        "bsc" : 14
+      }
+  },
+  "CurrenciesParser" : {
+    "WEB": {
+      "URL": "https://s3.coinmarketcap.com/generated/core/crypto/cryptos.json",
+      "httpProperties": {
+        "Authority": "coinmarketcap.com",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Charset": "utf-8",
+        "Accept-Encoding": "gzip",
+        "Accept-Language": "ru,en;q=0.9",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+        "Origin": "https://coinmarketcap.com",
+        "Referer": "https://coinmarketcap.com/",
+        "Sec-Ch-Ua": "\"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"114\", \"YaBrowser\";v=\"23\"",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Sec-Ch-Ua-Platform": "\"Linux\"",
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-site",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 YaBrowser/23.7.1.1148 (beta) Yowser/2.5 Safari/537.36"
+      }
+    },
+    "API": {
+      "URL": {
+        "fiat": "https://pro-api.coinmarketcap.com/v1/fiat/map",
+        "crypto": "https://pro-api.coinmarketcap.com/v1/cryptocurrency/map"
+      },
+      "httpProperties": {
+        "Authority": "coinmarketcap.com",
+        "Accept": "application/json",
+        "Accept-Charset": "utf-8",
+        "Accept-Encoding": "gzip",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache"
+      }
+    }
+  },
+  "MarketsParser" : {
+    "WEB": {
+      "URL": "https://coinmarketcap.com/rankings/exchanges/",
+      "exchangeTypes": ["cex", "dex", "derivatives", "lending"],
+      "httpProperties": {
+        "Authority": "coinmarketcap.com",
+        "Accept": "text/html",
+        "Accept-Charset": "utf-8",
+        "Accept-Encoding": "gzip",
+        "Accept-Language": "ru,en;q=0.9",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+        "Origin": "https://coinmarketcap.com",
+        "Referer": "https://coinmarketcap.com/",
+        "Sec-Ch-Ua": "Chromium\";v=\"116\", \"Not)A;Brand\";v=\"24\", \"YaBrowser\";v=\"23\"",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Sec-Ch-Ua-Platform": "\"Linux\"",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-User": "?1",
+        "Upgrade-Insecure-Requests": "1",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 YaBrowser/23.7.1.1148 (beta) Yowser/2.5 Safari/537.36"
+      }
+    },
+    "API": {
+      "URL": "https://pro-api.coinmarketcap.com/v1/exchange/map",
+      "httpProperties": {
+        "Authority": "coinmarketcap.com",
+        "Accept": "application/json",
+        "Accept-Charset": "utf-8",
+        "Accept-Encoding": "gzip",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache"
+      }
+    }
+  },
+  "ContractsParser": {
+    "URL": "https://coinmarketcap.com/currencies/%s/",
+    "httpProperties": {
+      "Authority": "coinmarketcap.com",
+      "Accept": "text/html",
+      "Accept-Charset": "utf-8",
+      "Accept-Encoding": "gzip",
+      "Accept-Language": "ru,en;q=0.9",
+      "Cache-Control": "no-cache",
+      "Pragma": "no-cache",
+      "Origin": "https://coinmarketcap.com",
+      "Referer": "https://coinmarketcap.com/",
+      "Sec-Ch-Ua": "Chromium\";v=\"116\", \"Not)A;Brand\";v=\"24\", \"YaBrowser\";v=\"23\"",
+      "Sec-Ch-Ua-Mobile": "?0",
+      "Sec-Ch-Ua-Platform": "\"Linux\"",
+      "Sec-Fetch-Dest": "document",
+      "Sec-Fetch-Mode": "navigate",
+      "Sec-Fetch-Site": "same-origin",
+      "Sec-Fetch-User": "?1",
+      "Upgrade-Insecure-Requests": "1",
+      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 YaBrowser/23.7.1.1148 (beta) Yowser/2.5 Safari/537.36"
+    }
+  },
+  "RelationsParser": {
+    "parsingLimit": 100,
+    "URL": "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/market-pairs/latest?slug=%s&start=%d&limit=%d&category=%s&centerType=%s&sort=cmc_rank_advanced&direction=desc&spotUntracked=true",
+    "types": ["cex", "dex"],
+    "categories": ["spot", "perpetual", "futures"],
+    "httpProperties": {
+      "Authority": "coinmarketcap.com",
+      "Accept": "application/json, text/plain, */*",
+      "Accept-Charset": "utf-8",
+      "Accept-Encoding": "gzip",
+      "Accept-Language": "ru,en;q=0.9",
+      "Cache-Control": "no-cache",
+      "Platform": "web",
+      "Pragma": "no-cache",
+      "Origin": "https://coinmarketcap.com",
+      "Referer": "https://coinmarketcap.com/",
+      "Sec-Ch-Ua": "Chromium\";v=\"116\", \"Not)A;Brand\";v=\"24\", \"YaBrowser\";v=\"23\"",
+      "Sec-Ch-Ua-Mobile": "?0",
+      "Sec-Ch-Ua-Platform": "\"Linux\"",
+      "Sec-Fetch-Dest": "empty",
+      "Sec-Fetch-Mode": "cors",
+      "Sec-Fetch-Site": "same-site",
+      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 YaBrowser/23.7.1.1148 (beta) Yowser/2.5 Safari/537.36"
+    }
+  }
+}
+

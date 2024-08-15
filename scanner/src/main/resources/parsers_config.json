@@ -1,0 +1,89 @@
+{
+  "BinanceParser" : {
+    "exchangeInfoURL" : "https://api1.binance.com/api/v3/exchangeInfo",
+    "priceInfoURL" : "https://api1.binance.com/api/v3/ticker/24hr",
+    "marketId" : 270,
+    "slug" : "binance",
+    "exchangeType" : "cex",
+    "exchangeCategory" : "spot"
+  },
+  "BybitParser" : {
+    "exchangeInfoURL" : "https://api.bybit.com/v5/market/instruments-info?category=spot",
+    "priceInfoURL" : "https://api.bybit.com/v5/market/tickers?category=spot",
+    "marketId" : 521,
+    "slug" : "bybit",
+    "exchangeType" : "cex",
+    "exchangeCategory" : "spot"
+  },
+  "KucoinParser" : {
+    "exchangeInfoURL" : "https://api.kucoin.com/api/v1/symbols",
+    "priceInfoURL" : "https://api.kucoin.com/api/v1/market/allTickers",
+    "marketId" : 311,
+    "slug" : "kucoin",
+    "exchangeType" : "cex",
+    "exchangeCategory" : "spot"
+  },
+  "UniswapEthereumParser" : {
+    "priceInfoURL": "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3",
+    "marketId": 1348,
+    "slug" : "uniswap-v3",
+    "chainId" : 1,
+    "exchangeType": "dex",
+    "exchangeCategory": "spot",
+    "query": "{ pools(skip: %s, first: %s, orderBy: feesUSD, orderDirection: desc) { id token0 { id symbol name } token1 { id symbol name } feeTier poolDayData(first: 1, orderBy: date, orderDirection: desc) { date token0Price token1Price liquidity volumeUSD volumeToken0 volumeToken1 tvlUSD } } }"
+  },
+  "UniswapPolygonParser" : {
+    "priceInfoURL": "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-polygon",
+    "marketId" : 1567,
+    "slug" : "uniswap-v3-polygon",
+    "chainId" : 25,
+    "exchangeType" : "dex",
+    "exchangeCategory" : "spot",
+    "query": "{ pools(skip: %s, first: %s, orderBy: feesUSD, orderDirection: desc) { id token0 { id symbol name } token1 { id symbol name } feeTier poolDayData(first: 1, orderBy: date, orderDirection: desc) { date token0Price token1Price liquidity volumeUSD volumeToken0 volumeToken1 tvlUSD } } }"
+  },
+  "UniswapArbitrumParser" : {
+    "priceInfoURL": "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-arbitrum-one",
+    "marketId" : 1478,
+    "slug" : "uniswap-v3-arbitrum",
+    "chain" : 51,
+    "exchangeType" : "dex",
+    "exchangeCategory" : "spot",
+    "query": "{ pools(skip: %s, first: %s, orderBy: feesUSD, orderDirection: desc) { id token0 { id symbol name } token1 { id symbol name } feeTier poolDayData(first: 1, orderBy: date, orderDirection: desc) { date token0Price token1Price liquidity volumeUSD volumeToken0 volumeToken1 tvlUSD } } }"
+  },
+  "UniswapOptimismParser" : {
+    "priceInfoURL": "https://api.thegraph.com/subgraphs/name/ianlapham/optimism-post-regenesis",
+    "marketId" : 1419,
+    "slug" : "uniswap-v3-optimism",
+    "chainId" : 42,
+    "exchangeType" : "dex",
+    "exchangeCategory" : "spot",
+    "query": "{ pools(skip: %s, first: %s, orderBy: feesUSD, orderDirection: desc) { id token0 { id symbol name } token1 { id symbol name } feeTier poolDayData(first: 1, orderBy: date, orderDirection: desc) { date token0Price token1Price liquidity volumeUSD volumeToken0 volumeToken1 tvlUSD } } }"
+  },
+  "UniswapCeloParser" : {
+    "priceInfoURL": "https://api.thegraph.com/subgraphs/name/jesse-sawa/uniswap-celo",
+    "marketId" : 1790,
+    "slug" : "uniswap-celo",
+    "chainId" : 35,
+    "exchangeType" : "dex",
+    "exchangeCategory" : "spot",
+    "query": "{ pools(skip: %s, first: %s, orderBy: feesUSD, orderDirection: desc) { id token0 { id symbol name } token1 { id symbol name } feeTier poolDayData(first: 1, orderBy: date, orderDirection: desc) { date token0Price token1Price liquidity volumeUSD volumeToken0 volumeToken1 tvlUSD } } }"
+  },
+  "UniswapBscParser" : {
+    "priceInfoURL": "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-bsc",
+    "marketId" : 6444,
+    "slug" : "uniswap-bsc",
+    "chainId" : 14,
+    "exchangeType" : "dex",
+    "exchangeCategory" : "spot",
+    "query": "{ pools(skip: %s, first: %s, orderBy: feesUSD, orderDirection: desc) { id token0 { id symbol name } token1 { id symbol name } feeTier poolDayData(first: 1, orderBy: date, orderDirection: desc) { date token0Price token1Price liquidity volumeUSD volumeToken0 volumeToken1 tvlUSD } } }"
+  },
+  "UniswapAvaxParser" : {
+    "priceInfoURL": "https://api.thegraph.com/subgraphs/name/lynnshaoyu/uniswap-v3-avax",
+    "marketId" : 7504,
+    "slug" : "uniswap-v3-avalanche",
+    "chainId" : 28,
+    "exchangeType" : "dex",
+    "exchangeCategory" : "spot",
+    "query": "{ pools(skip: %s, first: %s, orderBy: feesUSD, orderDirection: desc) { id token0 { id symbol name } token1 { id symbol name } feeTier poolDayData(first: 1, orderBy: date, orderDirection: desc) { date token0Price token1Price liquidity volumeUSD volumeToken0 volumeToken1 tvlUSD } } }"
+  }
+}

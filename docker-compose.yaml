@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres-service
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - TZ=UTC
+      - PGTZ=Europe/Moscow
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      - /data/arbitrage-unit:/var/lib/postgresql/data
+
+  scanner:
+    profiles: ["all"]
+    image: scanner:alpha
+    container_name: scanner-service
+    build:
+      context: ./scanner/
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      - TZ=Europe/Moscow
+      - MOUNTED_DIR=/home/app/mounted
+      - DATABASE_URL=jdbc:postgresql://postgres:5432/
+      - DATABASE_USER=user
+      - DATABASE_PASSWORD=password
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./scanner/mounted:/home/app/mounted
+
+  initializer:
+    profiles: ["all"]
+    image: initializer:alpha
+    container_name: initializer-service
+    build:
+      context: ./initializer/
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      - TZ=Europe/Moscow
+      - MOUNTED_DIR=/home/app/mounted
+      - DATABASE_URL=jdbc:postgresql://postgres:5432/
+      - DATABASE_USER=user
+      - DATABASE_PASSWORD=password
+      - CMC_API_KEY=b02c9f2e-5b6f-43ef-a704-1e86b4881bde
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./initializer/mounted:/home/app/mounted

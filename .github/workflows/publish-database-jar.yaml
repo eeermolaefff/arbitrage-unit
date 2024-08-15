@@ -1,0 +1,98 @@
+name: Java CI to create and upload release on pull request
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  build-number: ${GITHUB_RUN_NUMBER}
+
+jobs:
+  build:
+    name: Build Database-Alpha jar and release to GitHub
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'oracle'
+
+      - run: cd database && mvn package
+      - run: cd database && mvn install:install-file -Dfile=target/database-alpha.jar -DgroupId=com.stambul -DartifactId=database -Dversion=alpha -Dpackaging=jar -DgeneratePom=true
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Package
+          path: database/target
+
+      - uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.TOKEN_GITHUB }}"
+          automatic_release_tag: "latest"
+          title: "Database-Alpha Automated Build Latest"
+          prerelease: true
+          files: database/target/*.jar
+
+  push_to_registries:
+    name: Push Docker image to multiple registries
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+        packages: write
+        contents: read
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - id: download-release-asset-initializer
+        name: Download release asset
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          version: tags/latest
+          file: database-alpha.jar
+          target: initializer/src/database-alpha.jar
+          token: ${{ secrets.TOKEN_GITHUB }}
+
+      - id: download-release-asset-scanner
+        name: Download release asset
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          version: tags/latest
+          file: database-alpha.jar
+          target: scanner/src/database-alpha.jar
+          token: ${{ secrets.TOKEN_GITHUB }}
+
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'oracle'
+      - run: pwd && ls -la initializer/src
+
+      - name: Build and push arbitrage-unit-initializer Docker images
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        with:
+          context: initializer
+          push: true
+          tags: dan1ar/arbitrage-unit-initializer:latest
+
+      - name: Build and push arbitrage-unit-scanner Docker images
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        with:
+          context: scanner
+          push: true
+          tags: dan1ar/arbitrage-unit-scanner:latest
+
+      - name: Build and push database Docker images
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        with:
+          context: database
+          push: true
+          tags: dan1ar/postgres:alpine

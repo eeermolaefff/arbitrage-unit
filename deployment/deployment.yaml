@@ -1,0 +1,230 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: arbitrage-initializer-s3logd
+data:
+  streams.yaml: |
+    - file: /home/app/mounted/logs/initializer.log
+      type: backup
+      regex_pattern: ^.+\.\d{4}-\d{2}-\d{2}$
+      clear_after_backup: true
+    - file: /home/app/mounted/logs/initializer.log
+      type: stream
+      pushRate: 20
+    - file: /home/app/mounted/logs/exceptions.log
+      type: backup
+      regex_pattern: ^.+\.\d{4}-\d{2}-\d{2}$
+      clear_after_backup: true
+    - file: /home/app/mounted/logs/exceptions.log
+      type: stream
+      pushRate: 20
+    - file: /home/app/mounted/blacklist.json
+      type: stream
+      pushRate: 20
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arbitrage-db-initializer
+  labels:
+    app: arbitrage-db-initializer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: arbitrage-db-initializer
+      tier: app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: arbitrage-db-initializer
+        tier: app
+    spec:
+      volumes:
+      - name: logdir
+        emptyDir:
+          sizeLimit: 1Gi
+      - name: s3logd-config
+        configMap:
+          name: arbitrage-initializer-s3logd
+      containers:
+        - image: dan1ar/arbitrage-unit-initializer:latest
+          imagePullPolicy: Always
+          name: app
+          env:
+            - name: DATABASE_USER
+              value: user
+            - name: DATABASE_PASSWORD
+              value: password
+            - name: DATABASE_URL
+              value: jdbc:postgresql://postgres-service.postgres-dev.svc.cluster.local:5432/
+            - name: MOUNTED_DIR
+              value: /home/app/mounted
+            - name: TZ
+              value: "Europe/Moscow"
+            - name: CMC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cmc-api-key
+                  key: CMC_API_KEY
+          volumeMounts:
+          - name: logdir
+            mountPath: "/home/app/mounted"
+          resources:
+            requests:
+              cpu: 1000m
+              memory: 1500Mi
+            limits:
+              memory: "5Gi"
+              cpu: "2000m"
+
+        - name: s3logd
+          # build from https://github.com/project-STAMBUL/s3logd
+          # our fork;
+          image: dan1ar/s3logd:latest
+          env:
+          # Using our local minio deployment
+          - name: S3_BUCKET
+            value: "arbitrage-initializer-logs"
+          - name: S3_ENDPOINT
+            value: "minio-service.minio-dev.svc.cluster.local:9000"
+          - name: S3_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: minio-api
+                key: ACCESS_KEY
+          - name: S3_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: minio-api
+                key: SECRET_KEY
+          volumeMounts:
+          - name: logdir
+            mountPath: "/home/app/mounted"
+          - name: s3logd-config
+            mountPath: "/config"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+            limits:
+              memory: 1000Mi
+              cpu: 200m
+
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: arbitrage-scanner-s3logd
+data:
+  streams.yaml: |
+    - file: /home/app/mounted/logs/scanner.log
+      type: backup
+      regex_pattern: ^.+\.\d{4}-\d{2}-\d{2}$
+      clear_after_backup: true
+    - file: /home/app/mounted/logs/scanner.log
+      type: stream
+      pushRate: 20
+    - file: /home/app/mounted/logs/exceptions.log
+      type: backup
+      regex_pattern: ^.+\.\d{4}-\d{2}-\d{2}$
+      clear_after_backup: true
+    - file: /home/app/mounted/logs/exceptions.log
+      type: stream
+      pushRate: 20
+    - file: /home/app/mounted/blacklist.json
+      type: stream
+      pushRate: 20
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arbitrage-db-scanner
+  labels:
+    app: arbitrage-db-scanner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: arbitrage-db-scanner
+      tier: app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: arbitrage-db-scanner
+        tier: app
+    spec:
+      volumes:
+      - name: logdir
+        emptyDir:
+          sizeLimit: 1Gi
+      - name: s3logd-config
+        configMap:
+          name: arbitrage-scanner-s3logd
+      containers:
+        - image: dan1ar/arbitrage-unit-scanner:latest
+          imagePullPolicy: Always
+          name: app
+          env:
+            - name: DATABASE_USER
+              value: user
+            - name: DATABASE_PASSWORD
+              value: password
+            - name: DATABASE_URL
+              value: jdbc:postgresql://postgres-service.postgres-dev.svc.cluster.local:5432/
+            - name: MOUNTED_DIR
+              value: /home/app/mounted
+            - name: TZ
+              value: "Europe/Moscow"
+          volumeMounts:
+          - name: logdir
+            mountPath: "/home/app/mounted"
+          resources:
+            requests:
+              cpu: 1000m
+              memory: 1500Mi
+            limits:
+              memory: "5Gi"
+              cpu: "2000m"
+
+        - name: s3logd
+          # build from https://github.com/project-STAMBUL/s3logd
+          # our fork;
+          image: dan1ar/s3logd:latest
+          env:
+          # Using our local minio deployment
+          - name: S3_BUCKET
+            value: "arbitrage-scanner-logs"
+          - name: S3_ENDPOINT
+            value: "minio-service.minio-dev.svc.cluster.local:9000"
+          - name: S3_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: minio-api
+                key: ACCESS_KEY
+          - name: S3_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: minio-api
+                key: SECRET_KEY
+          volumeMounts:
+          - name: logdir
+            mountPath: "/home/app/mounted"
+          - name: s3logd-config
+            mountPath: "/config"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+            limits:
+              memory: 1000Mi
+              cpu: 200m
