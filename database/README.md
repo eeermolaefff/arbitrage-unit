@@ -1,3 +1,3 @@
 <h4 align="center">
-  <img alt="schema" src="database/schema.jpeg">
+  <img alt="schema" src="../schemas/database.png">
 </h4>
